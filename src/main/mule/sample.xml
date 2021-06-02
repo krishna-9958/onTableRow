@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1d2b5997-9eab-4e9f-9ad7-d6f8be1df3c2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="ccc8839e-da22-4aa1-8431-0e4ac48510ec" >
+		<db:my-sql-connection host="sql3.freesqldatabase.com" port="3306" user="sql3416327" password="T6pL5ENcQS" database="sql3416327" />
+	</db:config>
+	<flow name="sampleFlow" doc:id="677e00d0-5937-45df-9124-13e08f709278" >
+		<db:listener table="mydetails" doc:name="On Table Row" doc:id="fb31b8f7-a7e0-4de2-b122-4c2fe0f263c4" config-ref="Database_Config" watermarkColumn="timeStamp">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</db:listener>
+		<ee:transform doc:name="Transform Message" doc:id="9d46225b-8ac2-4019-9da2-a4bfcefc2eb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a60ad7bc-98f0-4645-b4d2-dafe2fcff100" message="#[payload]"/>
+	</flow>
+</mule>
